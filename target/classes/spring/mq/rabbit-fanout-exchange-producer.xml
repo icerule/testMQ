@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+    xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+      http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context.xsd
+      http://www.springframework.org/schema/integration/ip
+      http://www.springframework.org/schema/integration/ip/spring-integration-ip-2.0.xsd
+      http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+      http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+      http://www.springframework.org/schema/rabbit
+      http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd
+      ">
+    <!-- 引入mq配置文件 -->
+    <context:property-placeholder location="classpath:conf/mqConf.properties" />
+    <!-- 扫描文件（自动将servicec层注入） -->
+    <context:component-scan base-package="com.cd.mq.service" />
+    <!-- 连接服务配置 -->
+    <rabbit:connection-factory id="connectionFactory" host="${rabbit.host}" username="${rabbit.username}" password="${rabbit.password}" port="${rabbit.port}" virtual-host="${rabbit.vhost}" />
+    <rabbit:admin connection-factory="connectionFactory" />
+    <!-- queue 队列声明 -->
+    <rabbit:queue name="test_fanout" />
+    <!-- exchange queue binging key 绑定-->
+    <rabbit:fanout-exchange name="test_fanout_exchange">
+        <rabbit:bindings>
+            <rabbit:binding queue="test_fanout"/>
+        </rabbit:bindings>
+    </rabbit:fanout-exchange>
+    <!-- spring template声明-->
+    <rabbit:template exchange="test_fanout_exchange" id="amqpFanoutTemplate" connection-factory="connectionFactory"/>
+</beans>
