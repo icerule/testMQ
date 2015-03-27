@@ -23,9 +23,9 @@
     <rabbit:connection-factory id="connectionFactory" host="${rabbit.host}" username="${rabbit.username}" password="${rabbit.password}" port="${rabbit.port}" virtual-host="${rabbit.vhost}" />
     <rabbit:admin connection-factory="connectionFactory" />
     <!-- queue 队列声明 -->
-    <rabbit:queue id="test_direct" durable="true" auto-delete="false" exclusive="false" name="test_direct" />
+    <rabbit:queue name="test_direct" />
     <!-- exchange queue binging key 绑定-->
-    <rabbit:direct-exchange name="test_direct_exchange" durable="true" auto-delete="false" id="test_direct_exchange">
+    <rabbit:direct-exchange name="test_direct_exchange">
         <rabbit:bindings>
             <rabbit:binding queue="test_direct" key="test_direct_key" />
         </rabbit:bindings>
